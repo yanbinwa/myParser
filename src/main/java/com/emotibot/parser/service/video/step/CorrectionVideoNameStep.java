@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.emotibot.correction.service.CorrectionService;
 import com.emotibot.middleware.conf.ConfigManager;
+import com.emotibot.middleware.context.Context;
 import com.emotibot.middleware.request.HttpRequest;
 import com.emotibot.middleware.request.HttpRequestType;
 import com.emotibot.middleware.response.Response;
@@ -16,8 +17,6 @@ import com.emotibot.parser.common.Constants;
 
 public class CorrectionVideoNameStep extends AbstractStep
 {
-
-    private String correctedVideoName = null;
     private CorrectionService correctionService = null;
     
     public CorrectionVideoNameStep(CorrectionService correctionService)
@@ -26,8 +25,9 @@ public class CorrectionVideoNameStep extends AbstractStep
     }
     
     @Override
-    public void beforeRun()
+    public void beforeRun(Context context)
     {
+        context.clearTaskList();
         String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
         
         NLUTask task = new NLUTask();
@@ -38,19 +38,21 @@ public class CorrectionVideoNameStep extends AbstractStep
         String url = UrlUtils.getUrl(hostname, port, endpoint, text);
         HttpRequest request = new HttpRequest(url, null, HttpRequestType.GET);
         task.setRequest(request);
-        this.addTask(task);
+        task.setUniqId(context.getUniqId());
+        context.addTask(task);
     }
 
     @Override
-    public void afterRun()
+    public void afterRun(Context context)
     {
-        List<Response> responseList = this.outputMap.get(ResponseType.NLU);
+        List<Response> responseList = context.getOutputMap().get(ResponseType.NLU);
         if (responseList == null || responseList.isEmpty())
         {
             return;
         }
         NLUResponse response = (NLUResponse)responseList.get(0);
-        correctedVideoName = response.getNameEntityBySRL();
+        String correctedVideoName = response.getNameEntityBySRL();
+        System.out.println(correctedVideoName);
         List<String> resultList = correctionService.correct(correctedVideoName);
         if (resultList == null || resultList.isEmpty())
         {

@@ -50,10 +50,14 @@ public class VideoServiceImpl implements VideoService
     
     private boolean isNegetiveSentence(Context context)
     {
+        context.clearOutputMap();
         ParseSentenceTypeStep step = new ParseSentenceTypeStep();
-        step.setContext(context);
-        step.execute();
-        SentenceType type = step.getSentenceType();
+        long startTime = System.currentTimeMillis();
+        step.execute(context);
+        long endTime = System.currentTimeMillis();
+        System.out.println("ParseSentenceTypeStep: [" + (endTime - startTime) + "]ms");
+        
+        SentenceType type = (SentenceType) context.getValue(Constants.SENTENCE_TYPE_KEY);
         if (type == null)
         {
             return false;
@@ -63,19 +67,33 @@ public class VideoServiceImpl implements VideoService
 
     private String parseVideoName(Context context)
     {
+        context.clearOutputMap();
         ParseVideoNameStep step = new ParseVideoNameStep();
-        step.setContext(context);
-        step.execute();
+        long startTime = System.currentTimeMillis();
+        step.execute(context);
+        long endTime = System.currentTimeMillis();
+        System.out.println("ParseVideoNameStep: [" + (endTime - startTime) + "]ms");
         String videoName = (String) context.getValue(Constants.VIDEO_NAME_KEY);
-        //String starName = (String) context.getValue(Constants.START_NAME_KEY);
-        return videoName;
+        if (videoName != null)
+        {
+            return videoName; 
+        }
+        String starName = (String) context.getValue(Constants.START_NAME_KEY);
+        if (starName != null)
+        {
+            return starName; 
+        }
+        return null;
     }
     
     private String correctionVideoName(Context context)
     {
+        context.clearOutputMap();
         CorrectionVideoNameStep step = new CorrectionVideoNameStep(correctionService);
-        step.setContext(context);
-        step.execute();
+        long startTime = System.currentTimeMillis();
+        step.execute(context);
+        long endTime = System.currentTimeMillis();
+        System.out.println("CorrectionVideoNameStep: [" + (endTime - startTime) + "]ms");
         String correctedVideoName = (String) context.getValue(Constants.CORRECTED_VIDEO_NAME_KEY);
         return correctedVideoName;
     }

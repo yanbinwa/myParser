@@ -18,5 +18,6 @@ public class Constants
     public static final String VIDEO_NAME_KEY = "videoName";
     public static final String START_NAME_KEY = "starName";
     public static final String CORRECTED_VIDEO_NAME_KEY = "correctedVideoName";
+    public static final String SENTENCE_TYPE_KEY = "sentenceType";
     
 }

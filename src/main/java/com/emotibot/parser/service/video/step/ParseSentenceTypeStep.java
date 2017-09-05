@@ -3,6 +3,7 @@ package com.emotibot.parser.service.video.step;
 import java.util.List;
 
 import com.emotibot.middleware.conf.ConfigManager;
+import com.emotibot.middleware.context.Context;
 import com.emotibot.middleware.request.HttpRequest;
 import com.emotibot.middleware.request.HttpRequestType;
 import com.emotibot.middleware.response.Response;
@@ -17,16 +18,15 @@ import com.emotibot.parser.common.SentenceType;
 
 public class ParseSentenceTypeStep extends AbstractStep
 {
-
-    private SentenceType type = null;
     
     public ParseSentenceTypeStep()
     {
     }
     
     @Override
-    public void beforeRun()
+    public void beforeRun(Context context)
     {
+        context.clearTaskList();
         String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
         
         NLUTask task = new NLUTask();
@@ -37,13 +37,14 @@ public class ParseSentenceTypeStep extends AbstractStep
         String url = UrlUtils.getUrl(hostname, port, endpoint, text);
         HttpRequest request = new HttpRequest(url, null, HttpRequestType.GET);
         task.setRequest(request);
-        this.addTask(task);
+        task.setUniqId(context.getUniqId());
+        context.addTask(task);
     }
 
     @Override
-    public void afterRun()
+    public void afterRun(Context context)
     {
-        List<Response> responseList = this.outputMap.get(ResponseType.NLU);
+        List<Response> responseList = context.getOutputMap().get(ResponseType.NLU);
         if (responseList == null || responseList.isEmpty())
         {
             return;
@@ -55,43 +56,39 @@ public class ParseSentenceTypeStep extends AbstractStep
             return;
         }
         String sentenceType = nlu.getSentenceType();
+        SentenceType type = null;
         if (sentenceType != null && !sentenceType.trim().isEmpty())
         {
             if(sentenceType.contains("问句"))
             {
-                this.type = SentenceType.QUESTION;
-                return;
+                type = SentenceType.QUESTION;
             }
             else if(sentenceType.contains("否定"))
             {
-                this.type = SentenceType.NEGETIVE;
-                return;
+                type = SentenceType.NEGETIVE;
             }
             else if(sentenceType.contains("肯定"))
             {
-                this.type = SentenceType.POSTIVE;
-                return;
+                type = SentenceType.POSTIVE;
             }
+        }
+        if (type != null)
+        {
+            context.setValue(Constants.SENTENCE_TYPE_KEY, type);
+            return;
         }
         String polarity = nlu.getPolarity();
         if (polarity != null && !polarity.trim().isEmpty())
         {
             if (polarity.contains("Negative"))
             {
-                this.type = SentenceType.NEGETIVE;
-                return;
+                type = SentenceType.NEGETIVE;
             }
             else if(polarity.contains("Positive"))
             {
-                this.type = SentenceType.POSTIVE;
-                return;
+                type = SentenceType.POSTIVE;
             }
+            context.setValue(Constants.SENTENCE_TYPE_KEY, type);
         }
     }
-    
-    public SentenceType getSentenceType()
-    {
-        return this.type;
-    }
-
 }

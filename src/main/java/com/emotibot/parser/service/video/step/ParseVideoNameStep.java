@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.util.StringUtils;
 
 import com.emotibot.middleware.conf.ConfigManager;
+import com.emotibot.middleware.context.Context;
 import com.emotibot.middleware.request.HttpRequest;
 import com.emotibot.middleware.request.HttpRequestType;
 import com.emotibot.middleware.response.Response;
@@ -20,17 +21,15 @@ import com.emotibot.middleware.utils.UrlUtils;
 import com.emotibot.parser.common.Constants;
 
 public class ParseVideoNameStep extends AbstractStep
-{
-    private String videoName = null;
-    private String starName = null;
-    
+{   
     public ParseVideoNameStep()
     {
     }
     
     @Override
-    public void beforeRun()
+    public void beforeRun(Context context)
     {
+        context.clearTaskList();
         String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
         
         //CommonParser Task
@@ -42,7 +41,8 @@ public class ParseVideoNameStep extends AbstractStep
         String url = UrlUtils.getUrl(hostname, port, endpoint, text);
         HttpRequest request = new HttpRequest(url, null, HttpRequestType.GET);
         task.setRequest(request);
-        this.addTask(task);
+        task.setUniqId(context.getUniqId());
+        context.addTask(task);
         
         //NLU Task
         task = new NLUTask();
@@ -53,7 +53,8 @@ public class ParseVideoNameStep extends AbstractStep
         url = UrlUtils.getUrl(hostname, port, endpoint, text);
         request = new HttpRequest(url, null, HttpRequestType.GET);
         task.setRequest(request);
-        this.addTask(task);
+        task.setUniqId(context.getUniqId());
+        context.addTask(task);
     }
 
     /**
@@ -64,21 +65,19 @@ public class ParseVideoNameStep extends AbstractStep
      * 通过namedEntitiesMT找电影名称
      */
     @Override
-    public void afterRun()
+    public void afterRun(Context context)
     {
-        parserCommonParserResponse();
-        if (!StringUtils.isEmpty(videoName) && !StringUtils.isEmpty(starName))
+        parserCommonParserResponse(context);
+        if (context.isContainsKey(Constants.VIDEO_NAME_KEY) || context.isContainsKey(Constants.START_NAME_KEY))
         {
             return;
         }
-        parserNLUResponse();
-        context.setValue(Constants.VIDEO_NAME_KEY, videoName);
-        context.setValue(Constants.START_NAME_KEY, starName);
+        parserNLUResponse(context);
     }
     
-    private void parserCommonParserResponse()
+    private void parserCommonParserResponse(Context context)
     {
-        List<Response> responseList = this.outputMap.get(ResponseType.COMMON_PARSER);
+        List<Response> responseList = context.getOutputMap().get(ResponseType.COMMON_PARSER);
         if (responseList == null || responseList.isEmpty())
         {
             return;
@@ -88,30 +87,37 @@ public class ParseVideoNameStep extends AbstractStep
         {
             return;
         }
-        videoName = response.getMovie();
-        if (!StringUtils.isEmpty(videoName))
+        if (!StringUtils.isEmpty(response.getMovie()))
         {
-            return;
+            context.setValue(Constants.VIDEO_NAME_KEY, response.getMovie());
         }
-        videoName = response.getTeleplay();
+        else if (!StringUtils.isEmpty(response.getTeleplay()))
+        {
+            context.setValue(Constants.VIDEO_NAME_KEY, response.getTeleplay());
+        }
+        
+        if (!StringUtils.isEmpty(response.getStar()))
+        {
+            context.setValue(Constants.START_NAME_KEY, response.getStar());
+        }
     }
     
-    private void parserNLUResponse()
+    private void parserNLUResponse(Context context)
     {
-        List<Response> responseList = this.outputMap.get(ResponseType.NLU);
+        List<Response> responseList = context.getOutputMap().get(ResponseType.NLU);
         if (responseList == null || responseList.isEmpty())
         {
             return;
         }
         NLUResponse response = (NLUResponse) responseList.get(0);
         
-        if (StringUtils.isEmpty(videoName))
+        if (!StringUtils.isEmpty(response.getMovie()) && !context.isContainsKey(Constants.VIDEO_NAME_KEY))
         {
-            videoName = response.getMovie();
+            context.setValue(Constants.VIDEO_NAME_KEY, response.getMovie());
         }
-        if (StringUtils.isEmpty(starName))
+        if (StringUtils.isEmpty(response.getStar()) && !context.isContainsKey(Constants.START_NAME_KEY))
         {
-            starName = response.getStar();
+            context.setValue(Constants.START_NAME_KEY, response.getStar());
         }
     }
 }
