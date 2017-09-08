@@ -1,5 +1,9 @@
 package com.emotibot.parser.service.video;
 
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -9,9 +13,10 @@ import com.emotibot.correction.service.CorrectionService;
 import com.emotibot.middleware.context.Context;
 import com.emotibot.parser.common.Constants;
 import com.emotibot.parser.common.SentenceType;
-import com.emotibot.parser.service.video.step.CorrectionVideoNameStep;
+import com.emotibot.parser.service.video.step.CorrectNameEntitiesStep;
 import com.emotibot.parser.service.video.step.ParseSentenceTypeStep;
 import com.emotibot.parser.service.video.step.ParseVideoNameStep;
+import com.emotibot.parser.service.video.step.ParserNameEntitiesStep;
 
 @Service("videoService")
 @EnableAutoConfiguration
@@ -19,11 +24,14 @@ import com.emotibot.parser.service.video.step.ParseVideoNameStep;
 public class VideoServiceImpl implements VideoService
 {
     @Autowired
-    CorrectionService correctionService;
+    private CorrectionService correctionService;
+    
+    private ExecutorService executorService = Executors.newFixedThreadPool(10);
     
     @Override
     public String getVideoName(String sentence)
     {
+        System.out.println("");
         if (sentence == null || sentence.trim().isEmpty())
         {
             return null;
@@ -40,7 +48,12 @@ public class VideoServiceImpl implements VideoService
         {
             return retStr;
         }
-        retStr = correctionVideoName(context);
+        List<String> correctedNameEntities = parserNameEntities(context);
+        if (correctedNameEntities == null || correctedNameEntities.isEmpty())
+        {
+            return "找不到相应的电影";
+        }
+        retStr = correctVideoName(context);
         if (retStr != null)
         {
             return retStr;
@@ -51,7 +64,7 @@ public class VideoServiceImpl implements VideoService
     private boolean isNegetiveSentence(Context context)
     {
         context.clearOutputMap();
-        ParseSentenceTypeStep step = new ParseSentenceTypeStep();
+        ParseSentenceTypeStep step = new ParseSentenceTypeStep(executorService);
         long startTime = System.currentTimeMillis();
         step.execute(context);
         long endTime = System.currentTimeMillis();
@@ -68,7 +81,7 @@ public class VideoServiceImpl implements VideoService
     private String parseVideoName(Context context)
     {
         context.clearOutputMap();
-        ParseVideoNameStep step = new ParseVideoNameStep();
+        ParseVideoNameStep step = new ParseVideoNameStep(executorService);
         long startTime = System.currentTimeMillis();
         step.execute(context);
         long endTime = System.currentTimeMillis();
@@ -86,15 +99,38 @@ public class VideoServiceImpl implements VideoService
         return null;
     }
     
-    private String correctionVideoName(Context context)
+    @SuppressWarnings("unchecked")
+    private List<String> parserNameEntities(Context context)
     {
         context.clearOutputMap();
-        CorrectionVideoNameStep step = new CorrectionVideoNameStep(correctionService);
+        ParserNameEntitiesStep step = new ParserNameEntitiesStep(executorService);
         long startTime = System.currentTimeMillis();
         step.execute(context);
         long endTime = System.currentTimeMillis();
         System.out.println("CorrectionVideoNameStep: [" + (endTime - startTime) + "]ms");
-        String correctedVideoName = (String) context.getValue(Constants.CORRECTED_VIDEO_NAME_KEY);
-        return correctedVideoName;
+        List<String> pareserNameEntities = (List<String>) context.getValue(Constants.NAME_ENTITY_LIST_KEY);
+        System.out.println(pareserNameEntities);
+        return pareserNameEntities;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private String correctVideoName(Context context)
+    {
+        context.clearOutputMap();
+        CorrectNameEntitiesStep step = new CorrectNameEntitiesStep(correctionService, executorService);
+        long startTime = System.currentTimeMillis();
+        step.execute(context);
+        long endTime = System.currentTimeMillis();
+        System.out.println("CorrectNameEntitiesStep: [" + (endTime - startTime) + "]ms");
+        List<String> correctVideoNameList = (List<String>) context.getValue(Constants.CORRECTED_VIDEO_NAME_KEY);
+        System.out.println(correctVideoNameList);
+        if (correctVideoNameList.isEmpty())
+        {
+            return null;
+        }
+        else
+        {
+            return correctVideoNameList.get(0);
+        }
     }
 }

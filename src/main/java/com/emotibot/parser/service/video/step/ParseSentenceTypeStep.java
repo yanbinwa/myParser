@@ -1,13 +1,14 @@
 package com.emotibot.parser.service.video.step;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import com.emotibot.middleware.conf.ConfigManager;
 import com.emotibot.middleware.context.Context;
 import com.emotibot.middleware.request.HttpRequest;
 import com.emotibot.middleware.request.HttpRequestType;
+import com.emotibot.middleware.response.CommonResponseType;
 import com.emotibot.middleware.response.Response;
-import com.emotibot.middleware.response.ResponseType;
 import com.emotibot.middleware.response.nlu.NLU;
 import com.emotibot.middleware.response.nlu.NLUResponse;
 import com.emotibot.middleware.step.AbstractStep;
@@ -23,10 +24,14 @@ public class ParseSentenceTypeStep extends AbstractStep
     {
     }
     
+    public ParseSentenceTypeStep(ExecutorService executorService)
+    {
+        super(executorService);
+    }
+    
     @Override
     public void beforeRun(Context context)
     {
-        context.clearTaskList();
         String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
         
         NLUTask task = new NLUTask();
@@ -44,7 +49,8 @@ public class ParseSentenceTypeStep extends AbstractStep
     @Override
     public void afterRun(Context context)
     {
-        List<Response> responseList = context.getOutputMap().get(ResponseType.NLU);
+        context.clearTaskList();
+        List<Response> responseList = context.getOutputMap().get(CommonResponseType.NLU);
         if (responseList == null || responseList.isEmpty())
         {
             return;

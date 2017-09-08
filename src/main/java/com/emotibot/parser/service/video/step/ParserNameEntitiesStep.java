@@ -1,33 +1,34 @@
 package com.emotibot.parser.service.video.step;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
-import com.emotibot.correction.service.CorrectionService;
 import com.emotibot.middleware.conf.ConfigManager;
 import com.emotibot.middleware.context.Context;
 import com.emotibot.middleware.request.HttpRequest;
 import com.emotibot.middleware.request.HttpRequestType;
+import com.emotibot.middleware.response.CommonResponseType;
 import com.emotibot.middleware.response.Response;
-import com.emotibot.middleware.response.ResponseType;
 import com.emotibot.middleware.response.nlu.NLUResponse;
 import com.emotibot.middleware.step.AbstractStep;
 import com.emotibot.middleware.task.restCallTask.NLUTask;
 import com.emotibot.middleware.utils.UrlUtils;
 import com.emotibot.parser.common.Constants;
 
-public class CorrectionVideoNameStep extends AbstractStep
-{
-    private CorrectionService correctionService = null;
-    
-    public CorrectionVideoNameStep(CorrectionService correctionService)
+public class ParserNameEntitiesStep extends AbstractStep
+{    
+    public ParserNameEntitiesStep()
     {
-        this.correctionService = correctionService;
+    }
+    
+    public ParserNameEntitiesStep(ExecutorService executorService)
+    {
+        super(executorService);
     }
     
     @Override
     public void beforeRun(Context context)
     {
-        context.clearTaskList();
         String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
         
         NLUTask task = new NLUTask();
@@ -45,21 +46,15 @@ public class CorrectionVideoNameStep extends AbstractStep
     @Override
     public void afterRun(Context context)
     {
-        List<Response> responseList = context.getOutputMap().get(ResponseType.NLU);
+        context.clearTaskList();
+        List<Response> responseList = context.getOutputMap().get(CommonResponseType.NLU);
         if (responseList == null || responseList.isEmpty())
         {
             return;
         }
         NLUResponse response = (NLUResponse)responseList.get(0);
-        String correctedVideoName = response.getNameEntityBySRL();
-        System.out.println(correctedVideoName);
-        List<String> resultList = correctionService.correct(correctedVideoName);
-        if (resultList == null || resultList.isEmpty())
-        {
-            return;
-        }
-        System.out.println(resultList);
-        context.setValue(Constants.CORRECTED_VIDEO_NAME_KEY, resultList.get(0));
+        List<String> parserNameEntityList = response.getNameEntityBySRL();
+        context.setValue(Constants.NAME_ENTITY_LIST_KEY, parserNameEntityList);
     }
     
 }

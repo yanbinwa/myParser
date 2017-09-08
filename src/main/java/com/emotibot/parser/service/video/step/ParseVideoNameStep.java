@@ -2,6 +2,7 @@ package com.emotibot.parser.service.video.step;
 
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import org.springframework.util.StringUtils;
 
@@ -9,8 +10,8 @@ import com.emotibot.middleware.conf.ConfigManager;
 import com.emotibot.middleware.context.Context;
 import com.emotibot.middleware.request.HttpRequest;
 import com.emotibot.middleware.request.HttpRequestType;
+import com.emotibot.middleware.response.CommonResponseType;
 import com.emotibot.middleware.response.Response;
-import com.emotibot.middleware.response.ResponseType;
 import com.emotibot.middleware.response.commonParser.CommonParserResponse;
 import com.emotibot.middleware.response.nlu.NLUResponse;
 import com.emotibot.middleware.step.AbstractStep;
@@ -26,10 +27,14 @@ public class ParseVideoNameStep extends AbstractStep
     {
     }
     
+    public ParseVideoNameStep(ExecutorService executorService)
+    {
+        super(executorService);
+    }
+    
     @Override
     public void beforeRun(Context context)
     {
-        context.clearTaskList();
         String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
         
         //CommonParser Task
@@ -67,6 +72,7 @@ public class ParseVideoNameStep extends AbstractStep
     @Override
     public void afterRun(Context context)
     {
+        context.clearTaskList();
         parserCommonParserResponse(context);
         if (context.isContainsKey(Constants.VIDEO_NAME_KEY) || context.isContainsKey(Constants.START_NAME_KEY))
         {
@@ -77,7 +83,7 @@ public class ParseVideoNameStep extends AbstractStep
     
     private void parserCommonParserResponse(Context context)
     {
-        List<Response> responseList = context.getOutputMap().get(ResponseType.COMMON_PARSER);
+        List<Response> responseList = context.getOutputMap().get(CommonResponseType.COMMON_PARSER);
         if (responseList == null || responseList.isEmpty())
         {
             return;
@@ -104,7 +110,7 @@ public class ParseVideoNameStep extends AbstractStep
     
     private void parserNLUResponse(Context context)
     {
-        List<Response> responseList = context.getOutputMap().get(ResponseType.NLU);
+        List<Response> responseList = context.getOutputMap().get(CommonResponseType.NLU);
         if (responseList == null || responseList.isEmpty())
         {
             return;
