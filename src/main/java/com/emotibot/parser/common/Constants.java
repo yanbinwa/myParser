@@ -21,4 +21,13 @@ public class Constants
     public static final String CORRECTED_VIDEO_NAME_KEY = "correctedVideoName";
     public static final String SENTENCE_TYPE_KEY = "sentenceType";
     
+    //ParserVideoBaseStep
+    public static final String VIDEO_EPISODE_KEY = "episode";
+    public static final String VIDEO_SEASON_KEY = "season";
+    public static final String VIDEO_REWRITE_SENTENCE_KEY = "rewriteSentence";
+    public static final String VIDEO_REWRITE_TOKENS_KEY = "rewriteTokens";
+    public static final String NLU_CACHE_KEY = "nlu_cache";
+    
+    public static final String VIDEO_KEYWORD_N_KEY = "keywordN";
+    public static final String VIDEO_KEYWORD_A_KEY = "keywordA";
 }

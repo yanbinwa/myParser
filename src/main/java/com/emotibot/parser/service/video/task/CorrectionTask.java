@@ -49,7 +49,7 @@ public class CorrectionTask extends AbstractTask
         {
             SentenceElement candidateElement = new SentenceElement(candidate);
             double distance = getAdjustDistance(element, candidateElement);
-            CorrectedNameEntity correctedNameEntity = new CorrectedNameEntity(candidate, distance);
+            CorrectedNameEntity correctedNameEntity = new CorrectedNameEntity(candidate, nameEntity, distance);
             correctedNameEntityList.add(correctedNameEntity);
         }
         return new CorrectionResponse(correctedNameEntityList);
@@ -58,25 +58,55 @@ public class CorrectionTask extends AbstractTask
     private double getAdjustDistance(SentenceElement element, SentenceElement candidateElement)
     {
         double distance = EditDistanceUtils.getEditDistance(element, candidateElement);
+        //TODO
         int minLenght = Math.min(element.getSentence().length(), candidateElement.getSentence().length());
-        double rate = distance / (double) minLenght;
-        if (rate > 1)
+        int maxLenght = Math.max(element.getSentence().length(), candidateElement.getSentence().length());
+        int diffLength = maxLenght - minLenght;
+        //如果匹配到的长度只占一小部分，distance就要比较大
+        double rate = (maxLenght - distance) / (double) maxLenght;
+        if (rate < 0.2)
         {
-            distance += rate * 10;
+            distance -= diffLength * 0.7;
         }
-        else if (rate > 0.75)
+        else if (rate < 0.4)
         {
-            distance += rate * 5;
+            distance -= diffLength * 0.5;
         }
-        else if (rate > 0.5)
+        else if (rate < 0.6)
         {
-            distance += rate * 2;
+            distance -= diffLength * 0.3;
         }
-        else 
+        else if (rate < 0.8)
         {
-            distance += rate;
+            distance -= diffLength * 0.1;
+        }
+        else
+        {
+            distance -= diffLength;
+        }
+        
+//        rate = distance / (double) minLenght;
+//        if (rate > 1)
+//        {
+//            distance += rate * 10;
+//        }
+//        else if (rate > 0.75)
+//        {
+//            distance += rate * 5;
+//        }
+//        else if (rate > 0.5)
+//        {
+//            distance += rate * 2;
+//        }
+//        else 
+//        {
+//            distance += rate;
+//        }
+        //TODO 根据整体长度调整distance
+        if (candidateElement.getSentence().length() > 2)
+        {
+            distance -= (0.2 * (candidateElement.getSentence().length() - 2));
         }
         return distance;
     }
-    
 }

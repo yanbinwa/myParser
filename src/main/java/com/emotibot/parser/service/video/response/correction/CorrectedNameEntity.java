@@ -4,16 +4,19 @@ public class CorrectedNameEntity
 {
     private String nameEntity;
     
-    private double editDistance = -1;
+    private String originNameEntity;
     
+    private double editDistance = -1;
+        
     public CorrectedNameEntity()
     {
         
     }
     
-    public CorrectedNameEntity(String nameEntity, double editDistance)
+    public CorrectedNameEntity(String nameEntity, String originNameEntity, double editDistance)
     {
         this.nameEntity = nameEntity;
+        this.originNameEntity = originNameEntity;
         this.editDistance = editDistance;
     }
     
@@ -25,6 +28,16 @@ public class CorrectedNameEntity
     public String getNameEntity()
     {
         return nameEntity;
+    }
+    
+    public void setOriginNameEntity(String originNameEntity)
+    {
+        this.originNameEntity = originNameEntity;
+    }
+    
+    public String getOriginNameEntity()
+    {
+        return originNameEntity;
     }
     
     public void setEditDistance(double editDistance)

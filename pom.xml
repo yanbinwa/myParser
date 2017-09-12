@@ -52,6 +52,13 @@
       <artifactId>log4j</artifactId>
       <version>1.2.17</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/net.sf.opencsv/opencsv -->
+	<dependency>
+	    <groupId>net.sf.opencsv</groupId>
+	    <artifactId>opencsv</artifactId>
+	    <scope>test</scope>
+	    <version>2.3</version>
+	</dependency>
   </dependencies>
   <build>
     <defaultGoal>compile</defaultGoal>
