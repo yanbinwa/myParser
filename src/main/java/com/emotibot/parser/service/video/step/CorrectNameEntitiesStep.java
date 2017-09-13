@@ -139,7 +139,10 @@ public class CorrectNameEntitiesStep extends AbstractStep
         for (CorrectedNameEntity entity : correctedNameEntityList)
         {
             SentenceElement element1 = new SentenceElement(entity.getNameEntity());
-            double editDistance1 = EditDistanceUtils.getEditDistance(element1, element);
+            //TODO  这里不能简单的比较编辑距离，而是要比较连续长度下的编辑距离
+            
+            double editDistance1 = calculateDistance(element1, element);
+
             entity.setOriginNameEntity(sentence);
             entity.setEditDistance(editDistance1);
         }
@@ -219,5 +222,35 @@ public class CorrectNameEntitiesStep extends AbstractStep
             sentence = sentence.replaceFirst(starName, "");
         }
         return sentence;
+    }
+    
+    /**
+     * 这个方法的目的是比较
+     * 
+     */
+    @SuppressWarnings("unused")
+    private double calculateDistance(SentenceElement element, SentenceElement targetElement)
+    {
+        int len = element.getLength();
+        int targetLen = targetElement.getLength();
+        if (len >= targetLen)
+        {
+            return EditDistanceUtils.getEditDistance(element, targetElement);
+        }
+        int diffLen = targetLen - len;
+        double distance = Double.MAX_VALUE;
+        SentenceElement choseElement = null; 
+        for (int i = 0; i <= diffLen; i ++)
+        {
+            SentenceElement element1 = targetElement.subSentenceElement(i, i + len);
+            double distanceTmp = EditDistanceUtils.getEditDistance(element, element1);
+            if (distanceTmp < distance)
+            {
+                distance = distanceTmp;
+                choseElement = element1;
+            }
+        }
+        distance += diffLen;
+        return distance;
     }
 }

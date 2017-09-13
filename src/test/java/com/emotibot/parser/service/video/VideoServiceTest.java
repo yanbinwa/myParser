@@ -27,6 +27,9 @@ public class VideoServiceTest
     
     public static final int threadNum = 10;
     
+    public static int totalCount = 0;
+    public static int errorTotalCount = 0;
+    
     @Test
     public void test() throws Exception
     {
@@ -34,6 +37,7 @@ public class VideoServiceTest
         test3();
         long endTime = System.currentTimeMillis();
         System.out.println("用时：[" + (endTime - startTime) + "ms]");
+        System.out.println("totalCount: " + totalCount + "; errorCount: " + errorTotalCount);
     }
 
     @SuppressWarnings("unused")
@@ -122,7 +126,7 @@ public class VideoServiceTest
         int sentencePerTask = correctList.size() / threadNum;
         for (int i = 0; i < threadNum; i ++)
         {
-            Thread thread = new Thread(new TestTask(correctList.subList(i * sentencePerTask, (i + 1) * sentencePerTask), sentenceTemplateList));
+            Thread thread = new Thread(new TestTask1(correctList.subList(i * sentencePerTask, (i + 1) * sentencePerTask), sentenceTemplateList));
             thread.start();
             thread.join();
         }
@@ -161,6 +165,48 @@ public class VideoServiceTest
                     errorCount ++;
                 }
             }
+            System.out.println("total count: " + count + "; error count: " + errorCount);
+        }
+    }
+    
+    class TestTask1 implements Runnable
+    {
+
+        List<String[]> testSentenceList = null;
+        List<String[]> sentenceTemplateList = null;
+        
+        public TestTask1(List<String[]> testSentenceList, List<String[]> sentenceTemplateList)
+        {
+            this.testSentenceList = testSentenceList;
+            this.sentenceTemplateList = sentenceTemplateList;
+        }
+        
+        @Override
+        public void run()
+        {
+            int count = 0;
+            int errorCount = 0;
+            for (String[] ss : testSentenceList)
+            {
+                count ++;
+                String correctSentence = ss[0];
+                String errorSentence = ss[1];
+                for (String[] sentenceTemplates : sentenceTemplateList)
+                {
+                    String sentenceTemplate = sentenceTemplates[0];
+                    String sentence = sentenceTemplate.replaceAll("XXX", errorSentence);
+                    HttpRequest request = new HttpRequest("http://localhost:8080/video/getVideoName", sentence, HttpRequestType.POST);
+                    HttpResponse response = HttpUtils.post(request, 10000);
+                    String result = response.getResponse();
+                    if (!result.trim().equals(correctSentence))
+                    {
+                        System.out.println("correct: " + correctSentence + "; error: " + errorSentence + "; sentence: " + sentence + "; result: " + result);
+                        errorCount ++;
+                    }
+                }                
+            }
+            totalCount += count;
+            errorTotalCount += errorCount;
             System.out.println("total count: " + count + "; error count: " + errorCount);
         }
     }
