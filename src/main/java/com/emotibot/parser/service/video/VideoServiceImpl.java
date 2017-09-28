@@ -30,7 +30,7 @@ public class VideoServiceImpl implements VideoService
     @Autowired
     private CorrectionService correctionService;
     
-    private ExecutorService executorService = Executors.newFixedThreadPool(50);
+    private ExecutorService executorService = Executors.newFixedThreadPool(100);
     
     @Override
     public String getVideoName(String sentence)

@@ -30,4 +30,10 @@ public class Constants
     
     public static final String VIDEO_KEYWORD_N_KEY = "keywordN";
     public static final String VIDEO_KEYWORD_A_KEY = "keywordA";
+    
+    //MyEmbeddedServletContainerFactory
+    public static final String TOMCAT_PORT_KEY = "TOMCAT_PORT";
+    public static final String TOMCAT_MAX_CONNECTION_KEY = "TOMCAT_MAX_CONNECTION";
+    public static final String TOMCAT_MAX_THREAD_KEY = "TOMCAT_MAX_THREAD";
+    public static final String TOMCAT_CONNECTION_TIMEOUT_KEY = "TOMCAT_CONNECTION_TIMEOUT";
 }

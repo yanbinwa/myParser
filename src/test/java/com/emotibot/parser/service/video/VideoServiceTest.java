@@ -3,6 +3,7 @@ package com.emotibot.parser.service.video;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -19,6 +20,8 @@ public class VideoServiceTest
 {
 
     public static final String correctionFile = "/Users/emotibot/Documents/workspace/other/myParser/file/correctionTest.csv";
+    
+    public static final String service_url = "http://localhost:9090/video/getVideoName";
     
     //没有第几集这边的表达
     //public static final String correctionFile2 = "/Users/emotibot/Documents/workspace/other/myParser/file/correctionTest.csv";
@@ -37,7 +40,7 @@ public class VideoServiceTest
         test3();
         long endTime = System.currentTimeMillis();
         System.out.println("用时：[" + (endTime - startTime) + "ms]");
-        System.out.println("totalCount: " + totalCount + "; errorCount: " + errorTotalCount);
+        System.out.println("totalCount: " + totalCount + "; errorCount: " + errorTotalCount + "; errorRate: " + (errorTotalCount / (double)totalCount));
     }
 
     @SuppressWarnings("unused")
@@ -54,7 +57,7 @@ public class VideoServiceTest
             count ++;
             String correctSentence = ss[0];
             String errorSentence = ss[1];
-            HttpRequest request = new HttpRequest("http://localhost:8080/video/getVideoName", errorSentence, HttpRequestType.POST);
+            HttpRequest request = new HttpRequest(service_url, errorSentence, HttpRequestType.POST);
             HttpResponse response = HttpUtils.post(request, 10000);
             String result = response.getResponse();
             if (!result.trim().equals(correctSentence))
@@ -94,7 +97,7 @@ public class VideoServiceTest
             String errorSentence = ss[1];
             String sentenceTemplate = sentenceTemplateList.get(new Random().nextInt(sentenceTemplateList.size()))[0];
             String sentence = sentenceTemplate.replaceAll("XXX", errorSentence);
-            HttpRequest request = new HttpRequest("http://localhost:8080/video/getVideoName", sentence, HttpRequestType.POST);
+            HttpRequest request = new HttpRequest(service_url, sentence, HttpRequestType.POST);
             HttpResponse response = HttpUtils.post(request, 10000);
             String result = response.getResponse();
             if (!result.trim().equals(correctSentence))
@@ -124,10 +127,15 @@ public class VideoServiceTest
         csvReader.close();
         
         int sentencePerTask = correctList.size() / threadNum;
+        List<Thread> threadList = new ArrayList<Thread>();
         for (int i = 0; i < threadNum; i ++)
         {
-            Thread thread = new Thread(new TestTask1(correctList.subList(i * sentencePerTask, (i + 1) * sentencePerTask), sentenceTemplateList));
+            Thread thread = new Thread(new TestTask(correctList.subList(i * sentencePerTask, (i + 1) * sentencePerTask), sentenceTemplateList));
             thread.start();
+            threadList.add(thread);
+        }
+        for (Thread thread : threadList)
+        {
             thread.join();
         }
     }
@@ -156,7 +164,7 @@ public class VideoServiceTest
                 String errorSentence = ss[1];
                 String sentenceTemplate = sentenceTemplateList.get(new Random().nextInt(sentenceTemplateList.size()))[0];
                 String sentence = sentenceTemplate.replaceAll("XXX", errorSentence);
-                HttpRequest request = new HttpRequest("http://localhost:8080/video/getVideoName", sentence, HttpRequestType.POST);
+                HttpRequest request = new HttpRequest(service_url, sentence, HttpRequestType.POST);
                 HttpResponse response = HttpUtils.post(request, 10000);
                 String result = response.getResponse();
                 if (!result.trim().equals(correctSentence))
@@ -165,6 +173,8 @@ public class VideoServiceTest
                     errorCount ++;
                 }
             }
+            totalCount += count;
+            errorTotalCount += errorCount;
             System.out.println("total count: " + count + "; error count: " + errorCount);
         }
     }
@@ -195,7 +205,7 @@ public class VideoServiceTest
                 {
                     String sentenceTemplate = sentenceTemplates[0];
                     String sentence = sentenceTemplate.replaceAll("XXX", errorSentence);
-                    HttpRequest request = new HttpRequest("http://localhost:8080/video/getVideoName", sentence, HttpRequestType.POST);
+                    HttpRequest request = new HttpRequest(service_url, sentence, HttpRequestType.POST);
                     HttpResponse response = HttpUtils.post(request, 10000);
                     String result = response.getResponse();
                     if (!result.trim().equals(correctSentence))
