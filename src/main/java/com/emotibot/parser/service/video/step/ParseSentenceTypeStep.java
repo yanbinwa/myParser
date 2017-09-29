@@ -50,7 +50,7 @@ public class ParseSentenceTypeStep extends AbstractStep
     public void afterRun(Context context)
     {
         context.clearTaskList();
-        List<Response> responseList = context.getOutputMap().get(CommonResponseType.NLU);
+        List<Response> responseList = getOutputMap(context).get(CommonResponseType.NLU);
         if (responseList == null || responseList.isEmpty())
         {
             return;

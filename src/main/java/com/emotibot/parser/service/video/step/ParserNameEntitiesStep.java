@@ -39,7 +39,7 @@ public class ParserNameEntitiesStep extends AbstractStep
         {
             List<Response> nluReponseList = new ArrayList<Response>();
             nluReponseList.add((Response)obj);
-            context.getOutputMap().put(CommonResponseType.NLU, nluReponseList);
+            getOutputMap(context).put(CommonResponseType.NLU, nluReponseList);
             return;
         }
         
@@ -59,7 +59,7 @@ public class ParserNameEntitiesStep extends AbstractStep
     public void afterRun(Context context)
     {
         context.clearTaskList();
-        List<Response> responseList = context.getOutputMap().get(CommonResponseType.NLU);
+        List<Response> responseList = getOutputMap(context).get(CommonResponseType.NLU);
         if (responseList == null || responseList.isEmpty())
         {
             return;

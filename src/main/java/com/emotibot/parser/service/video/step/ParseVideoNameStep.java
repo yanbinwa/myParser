@@ -88,7 +88,7 @@ public class ParseVideoNameStep extends AbstractStep
     
     private void parserVideoBaseInfo(Context context)
     {
-        List<Response> responseList = context.getOutputMap().get(CommonResponseType.NLU);
+        List<Response> responseList = getOutputMap(context).get(CommonResponseType.NLU);
         String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
         if (responseList == null || responseList.isEmpty())
         {
@@ -134,7 +134,7 @@ public class ParseVideoNameStep extends AbstractStep
     
     private void parserCommonParserResponse(Context context)
     {
-        List<Response> responseList = context.getOutputMap().get(CommonResponseType.COMMON_PARSER);
+        List<Response> responseList = getOutputMap(context).get(CommonResponseType.COMMON_PARSER);
         if (responseList == null || responseList.isEmpty())
         {
             return;
@@ -161,7 +161,7 @@ public class ParseVideoNameStep extends AbstractStep
     @SuppressWarnings("unused")
     private void parserNLUResponse(Context context)
     {
-        List<Response> responseList = context.getOutputMap().get(CommonResponseType.NLU);
+        List<Response> responseList = getOutputMap(context).get(CommonResponseType.NLU);
         if (responseList == null || responseList.isEmpty())
         {
             return;

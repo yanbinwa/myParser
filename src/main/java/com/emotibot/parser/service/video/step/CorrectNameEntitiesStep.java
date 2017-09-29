@@ -68,7 +68,7 @@ public class CorrectNameEntitiesStep extends AbstractStep
     public void afterRun(Context context)
     {
         context.clearTaskList();
-        List<Response> responseList = context.getOutputMap().get(MyResponseType.CORRECTION);
+        List<Response> responseList = getOutputMap(context).get(MyResponseType.CORRECTION);
         if (responseList == null)
         {
             return;
