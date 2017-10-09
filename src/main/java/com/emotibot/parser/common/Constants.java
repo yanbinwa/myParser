@@ -36,4 +36,7 @@ public class Constants
     public static final String TOMCAT_MAX_CONNECTION_KEY = "TOMCAT_MAX_CONNECTION";
     public static final String TOMCAT_MAX_THREAD_KEY = "TOMCAT_MAX_THREAD";
     public static final String TOMCAT_CONNECTION_TIMEOUT_KEY = "TOMCAT_CONNECTION_TIMEOUT";
+    
+    //Controller
+    public static final String CONTROLLER_CONFIG_FILE_KEY = "CONTROLLER_CONFIG_FILE";
 }

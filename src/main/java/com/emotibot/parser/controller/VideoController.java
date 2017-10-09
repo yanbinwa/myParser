@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.emotibot.parser.service.video.VideoService;
+import com.emotibot.parser.service.video2.Video2Service;
 
 @RestController
 @RequestMapping("/video")
@@ -15,9 +16,18 @@ public class VideoController
     @Autowired
     VideoService videoService;
     
+    @Autowired
+    Video2Service video2Service;
+    
     @RequestMapping(value="/getVideoName", method = RequestMethod.POST)
     public String getVideoName(@RequestBody String sentence)
     {
         return videoService.getVideoName(sentence);
+    }
+    
+    @RequestMapping(value="/getVideo2Name", method = RequestMethod.POST)
+    public String getVideo2Name(@RequestBody String sentence)
+    {
+        return video2Service.getVideoName(sentence);
     }
 }

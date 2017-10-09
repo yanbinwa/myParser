@@ -4,29 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.emotibot.correction.element.SentenceElement;
-import com.emotibot.correction.service.CorrectionService;
 import com.emotibot.correction.utils.EditDistanceUtils;
 import com.emotibot.middleware.response.Response;
 import com.emotibot.middleware.task.AbstractTask;
 import com.emotibot.parser.service.video.response.correction.CorrectedNameEntity;
 import com.emotibot.parser.service.video.response.correction.CorrectionResponse;
+import com.emotibot.parser.service.video.utils.CorrectionUtils;
 
 public class CorrectionTask extends AbstractTask
 {
 
-    private CorrectionService correctionService;
     private String nameEntity;
     private boolean isByPinyin = false;
     
-    public CorrectionTask(CorrectionService correctionService, String nameEntity)
+    public CorrectionTask(String nameEntity)
     {
-        this.correctionService = correctionService;
         this.nameEntity = nameEntity;
     }
     
-    public CorrectionTask(CorrectionService correctionService, String nameEntity, boolean isByPinyin)
+    public CorrectionTask(String nameEntity, boolean isByPinyin)
     {
-        this.correctionService = correctionService;
         this.nameEntity = nameEntity;
         this.isByPinyin = isByPinyin;
     }
@@ -38,11 +35,11 @@ public class CorrectionTask extends AbstractTask
         List<String> candidateList = null;
         if (!isByPinyin)
         {
-            candidateList = correctionService.correct(nameEntity);
+            candidateList = CorrectionUtils.correction(nameEntity);
         }
         else
         {
-            candidateList = correctionService.correctWithPinyin(nameEntity);
+            candidateList = CorrectionUtils.correctWithPinyin(nameEntity);
         }
         SentenceElement element = new SentenceElement(nameEntity);
         for (String candidate : candidateList)

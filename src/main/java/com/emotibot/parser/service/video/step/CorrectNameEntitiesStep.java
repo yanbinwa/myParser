@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutorService;
 import org.springframework.util.StringUtils;
 
 import com.emotibot.correction.element.SentenceElement;
-import com.emotibot.correction.service.CorrectionService;
 import com.emotibot.correction.utils.EditDistanceUtils;
 import com.emotibot.middleware.context.Context;
 import com.emotibot.middleware.response.Response;
@@ -27,28 +26,21 @@ public class CorrectNameEntitiesStep extends AbstractStep
 {
 
     private static int selectNum = 10;
-        
-    private CorrectionService correctionService;
-        
-    public CorrectNameEntitiesStep(CorrectionService correctionService)
+    
+    public CorrectNameEntitiesStep()
     {
-        this.correctionService = correctionService;
+        
     }
     
-    public CorrectNameEntitiesStep(CorrectionService correctionService, ExecutorService executorService)
+    public CorrectNameEntitiesStep(ExecutorService executorService)
     {
         super(executorService);
-        this.correctionService = correctionService;
     }
     
     @SuppressWarnings("unchecked")
     @Override
     public void beforeRun(Context context)
     {
-        if (correctionService == null)
-        {
-            return;
-        }
         Object obj = context.getValue(Constants.NAME_ENTITY_LIST_KEY);
         if (obj == null || !(obj instanceof List))
         {
@@ -57,18 +49,17 @@ public class CorrectNameEntitiesStep extends AbstractStep
         List<String> nameEntityList = (List<String>) obj;
         for (String nameEntity : nameEntityList)
         {
-            Task task = new CorrectionTask(correctionService, nameEntity);
-            Task task2 = new CorrectionTask(correctionService, nameEntity, true);
-            context.addTask(task);
-            context.addTask(task2);
+            Task task = new CorrectionTask(nameEntity);
+            Task task2 = new CorrectionTask(nameEntity, true);
+            this.addTask(context, task);
+            this.addTask(context, task2);
         }
     }
 
     @Override
     public void afterRun(Context context)
     {
-        context.clearTaskList();
-        List<Response> responseList = getOutputMap(context).get(MyResponseType.CORRECTION);
+        List<Response> responseList = this.getOutputMap(context).get(MyResponseType.CORRECTION);
         if (responseList == null)
         {
             return;

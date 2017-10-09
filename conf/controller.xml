@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stepControllerConfig>
+	<stepController name="video" workThread="100">
+		<stepInput className="com.emotibot.parser.service.video2.input.VideoStepInput"/>
+		<stepCollection index="1">
+			<step className="com.emotibot.parser.service.video.step.ParseVideoNameStep" index="1" timeout="1000"/>
+		</stepCollection>
+		<adjustCollection type="AND" index="2">
+			<adjust key="videoName" type="String" target="True"/>
+		</adjustCollection>
+		<stepCollection index="3">
+			<step className="com.emotibot.parser.service.video.step.ParserNameEntitiesStep" index="1" timeout="1000"/>
+		</stepCollection>
+		<adjustCollection type="AND" index="4">
+			<adjust key="nameEntityList" type="Collection" target="False"/>
+		</adjustCollection>
+		<stepCollection index="5">
+			<step className="com.emotibot.parser.service.video.step.CorrectNameEntitiesStep" index="1" timeout="1000"/>
+		</stepCollection>
+		<stepOutput className="com.emotibot.parser.service.video2.output.VideoStepOutput"/>
+	</stepController>
+</stepControllerConfig>

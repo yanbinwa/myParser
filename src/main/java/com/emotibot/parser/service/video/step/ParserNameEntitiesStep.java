@@ -52,13 +52,12 @@ public class ParserNameEntitiesStep extends AbstractStep
         HttpRequest request = new HttpRequest(url, null, HttpRequestType.GET);
         task.setRequest(request);
         task.setUniqId(context.getUniqId());
-        context.addTask(task);
+        this.addTask(context, task);
     }
 
     @Override
     public void afterRun(Context context)
     {
-        context.clearTaskList();
         List<Response> responseList = getOutputMap(context).get(CommonResponseType.NLU);
         if (responseList == null || responseList.isEmpty())
         {

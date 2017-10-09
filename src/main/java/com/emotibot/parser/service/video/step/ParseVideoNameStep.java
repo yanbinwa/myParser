@@ -49,7 +49,7 @@ public class ParseVideoNameStep extends AbstractStep
         HttpRequest request = new HttpRequest(url, null, HttpRequestType.GET);
         task.setRequest(request);
         task.setUniqId(context.getUniqId());
-        context.addTask(task);
+        this.addTask(context, task);
         
         //NLU Task
         task = new NLUTask();
@@ -61,7 +61,7 @@ public class ParseVideoNameStep extends AbstractStep
         request = new HttpRequest(url, null, HttpRequestType.GET);
         task.setRequest(request);
         task.setUniqId(context.getUniqId());
-        context.addTask(task);
+        this.addTask(context, task);
     }
 
     /**
@@ -76,7 +76,6 @@ public class ParseVideoNameStep extends AbstractStep
     @Override
     public void afterRun(Context context)
     {
-        context.clearTaskList();
         parserVideoBaseInfo(context);
         parserCommonParserResponse(context);
 //        if (context.isContainsKey(Constants.VIDEO_NAME_KEY) || context.isContainsKey(Constants.START_NAME_KEY))

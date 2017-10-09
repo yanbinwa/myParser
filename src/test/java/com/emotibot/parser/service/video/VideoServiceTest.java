@@ -21,7 +21,7 @@ public class VideoServiceTest
 
     public static final String correctionFile = "/Users/emotibot/Documents/workspace/other/myParser/file/correctionTest.csv";
     
-    public static final String service_url = "http://localhost:9090/video/getVideoName";
+    public static final String service_url = "http://localhost:9090/video/getVideo2Name";
     
     //没有第几集这边的表达
     //public static final String correctionFile2 = "/Users/emotibot/Documents/workspace/other/myParser/file/correctionTest.csv";

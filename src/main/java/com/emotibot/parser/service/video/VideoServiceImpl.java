@@ -6,13 +6,11 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.emotibot.correction.service.CorrectionService;
 import com.emotibot.middleware.context.Context;
 import com.emotibot.parser.common.Constants;
 import com.emotibot.parser.common.SentenceType;
@@ -27,8 +25,6 @@ import com.emotibot.parser.service.video.utils.DigitUtil;
 @EnableConfigurationProperties
 public class VideoServiceImpl implements VideoService
 {
-    @Autowired
-    private CorrectionService correctionService;
     
     private ExecutorService executorService = Executors.newFixedThreadPool(100);
     
@@ -65,7 +61,6 @@ public class VideoServiceImpl implements VideoService
     @SuppressWarnings("unused")
     private boolean isNegetiveSentence(Context context)
     {
-        context.clearOutputMap();
         ParseSentenceTypeStep step = new ParseSentenceTypeStep(executorService);
         long startTime = System.currentTimeMillis();
         step.execute(context);
@@ -82,7 +77,6 @@ public class VideoServiceImpl implements VideoService
     
     private String parseVideoName(Context context)
     {
-        context.clearOutputMap();
         ParseVideoNameStep step = new ParseVideoNameStep(executorService);
         long startTime = System.currentTimeMillis();
         step.execute(context);
@@ -99,7 +93,6 @@ public class VideoServiceImpl implements VideoService
     @SuppressWarnings("unchecked")
     private List<String> parserNameEntities(Context context)
     {
-        context.clearOutputMap();
         ParserNameEntitiesStep step = new ParserNameEntitiesStep(executorService);
         long startTime = System.currentTimeMillis();
         step.execute(context);
@@ -113,8 +106,7 @@ public class VideoServiceImpl implements VideoService
     @SuppressWarnings("unchecked")
     private String correctVideoName(Context context)
     {
-        context.clearOutputMap();
-        CorrectNameEntitiesStep step = new CorrectNameEntitiesStep(correctionService, executorService);
+        CorrectNameEntitiesStep step = new CorrectNameEntitiesStep(executorService);
         long startTime = System.currentTimeMillis();
         step.execute(context);
         long endTime = System.currentTimeMillis();

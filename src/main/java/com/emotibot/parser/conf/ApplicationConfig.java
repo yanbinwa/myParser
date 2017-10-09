@@ -3,15 +3,20 @@ package com.emotibot.parser.conf;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.emotibot.correction.service.CorrectionService;
-import com.emotibot.correction.service.CorrectionServiceImpl;
+import com.emotibot.middleware.conf.ConfigManager;
+import com.emotibot.middleware.controller.controller.StepController;
+import com.emotibot.middleware.controller.controller.StepControllerImpl;
+import com.emotibot.parser.common.Constants;
 
 @Configuration
 public class ApplicationConfig
 {
-    @Bean(name="correctionService")
-    public CorrectionService correctionService()
+    @Bean(name="stepController")
+    public StepController stepController()
     {
-        return new CorrectionServiceImpl();
+        StepController controller = new StepControllerImpl();
+        String controllerConfigFile = ConfigManager.INSTANCE.getPropertyString(Constants.CONTROLLER_CONFIG_FILE_KEY);
+        controller.loadConfig(controllerConfigFile);
+        return controller;
     }
 }
