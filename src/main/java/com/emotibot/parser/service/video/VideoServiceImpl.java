@@ -32,6 +32,8 @@ public class VideoServiceImpl implements VideoService
     @Override
     public String getVideoName(String sentence)
     {
+        logger.info("");
+        logger.info("-------------- start -------------");
         if (sentence == null || sentence.trim().isEmpty())
         {
             return null;
@@ -55,6 +57,8 @@ public class VideoServiceImpl implements VideoService
             return output(context);
         }
         retStr = correctVideoName(context);
+        logger.info("-------------- end -------------");
+        logger.info("");
         return output(context);
     }
     
