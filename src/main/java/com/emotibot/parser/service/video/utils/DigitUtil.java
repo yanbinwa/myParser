@@ -1,12 +1,16 @@
 package com.emotibot.parser.service.video.utils;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 /**
  * 处理数词的工具类
  * @author liushiquan
  *
  */
 public class DigitUtil {
+    
+    private static final Logger logger = Logger.getLogger(DigitUtil.class);
     /**
      * 阿拉伯数字
      */
@@ -39,7 +43,7 @@ public class DigitUtil {
 
     }
     public static void main(String[] args) {
-        System.out.println(parseDigits("一"));
+        logger.info(parseDigits("一"));
     }
     /**
      * 解析中文格式的数字，假定参数中全是汉字，否则会解析异常，解析失败返回null

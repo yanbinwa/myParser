@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.log4j.Logger;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,12 @@ import com.emotibot.parser.service.video.utils.DigitUtil;
 @EnableConfigurationProperties
 public class VideoServiceImpl implements VideoService
 {
-    
+    private static final Logger logger = Logger.getLogger(VideoServiceImpl.class);
     private ExecutorService executorService = Executors.newFixedThreadPool(100);
     
     @Override
     public String getVideoName(String sentence)
     {
-        System.out.println("");
         if (sentence == null || sentence.trim().isEmpty())
         {
             return null;
@@ -65,7 +65,7 @@ public class VideoServiceImpl implements VideoService
         long startTime = System.currentTimeMillis();
         step.execute(context);
         long endTime = System.currentTimeMillis();
-        System.out.println("ParseSentenceTypeStep: [" + (endTime - startTime) + "]ms");
+        logger.info("ParseSentenceTypeStep: [" + (endTime - startTime) + "]ms");
         
         SentenceType type = (SentenceType) context.getValue(Constants.SENTENCE_TYPE_KEY);
         if (type == null)
@@ -81,7 +81,7 @@ public class VideoServiceImpl implements VideoService
         long startTime = System.currentTimeMillis();
         step.execute(context);
         long endTime = System.currentTimeMillis();
-        System.out.println("ParseVideoNameStep: [" + (endTime - startTime) + "]ms");
+        logger.info("ParseVideoNameStep: [" + (endTime - startTime) + "]ms");
         String videoName = (String) context.getValue(Constants.VIDEO_NAME_KEY);
         if (videoName != null)
         {
@@ -97,9 +97,9 @@ public class VideoServiceImpl implements VideoService
         long startTime = System.currentTimeMillis();
         step.execute(context);
         long endTime = System.currentTimeMillis();
-        System.out.println("CorrectionVideoNameStep: [" + (endTime - startTime) + "]ms");
+        logger.info("CorrectionVideoNameStep: [" + (endTime - startTime) + "]ms");
         List<String> pareserNameEntities = (List<String>) context.getValue(Constants.NAME_ENTITY_LIST_KEY);
-        System.out.println(pareserNameEntities);
+        logger.info(pareserNameEntities);
         return pareserNameEntities;
     }
     
@@ -110,13 +110,13 @@ public class VideoServiceImpl implements VideoService
         long startTime = System.currentTimeMillis();
         step.execute(context);
         long endTime = System.currentTimeMillis();
-        System.out.println("CorrectNameEntitiesStep: [" + (endTime - startTime) + "]ms");
+        logger.info("CorrectNameEntitiesStep: [" + (endTime - startTime) + "]ms");
         List<String> correctVideoNameList = (List<String>) context.getValue(Constants.CORRECTED_VIDEO_NAME_KEY);
         if (correctVideoNameList == null)
         {
             return null;
         }
-        System.out.println(correctVideoNameList);
+        logger.info(correctVideoNameList);
         if (correctVideoNameList.isEmpty())
         {
             return null;
@@ -144,6 +144,7 @@ public class VideoServiceImpl implements VideoService
         {
             Integer season = (Integer) context.getValue(Constants.VIDEO_SEASON_KEY);
             Integer episode = (Integer) context.getValue(Constants.VIDEO_EPISODE_KEY);
+            //TODO: 最后一集的case
             if (season != null)
             {
                 videoName = videoName + "第" + DigitUtil.parseDigits(season) + "季"; 

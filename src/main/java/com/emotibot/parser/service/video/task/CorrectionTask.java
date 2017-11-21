@@ -7,6 +7,7 @@ import com.emotibot.correction.element.SentenceElement;
 import com.emotibot.correction.utils.EditDistanceUtils;
 import com.emotibot.middleware.response.Response;
 import com.emotibot.middleware.task.AbstractTask;
+import com.emotibot.parser.common.Constants;
 import com.emotibot.parser.service.video.response.correction.CorrectedNameEntity;
 import com.emotibot.parser.service.video.response.correction.CorrectionResponse;
 import com.emotibot.parser.service.video.utils.CorrectionUtils;
@@ -61,21 +62,21 @@ public class CorrectionTask extends AbstractTask
         int diffLength = maxLenght - minLenght;
         //如果匹配到的长度只占一小部分，distance就要比较大
         double rate = (maxLenght - distance) / (double) maxLenght;
-        if (rate < 0.2)
+        if (rate < Constants.DIFF_LEN_RATE_LEVEL_1)
         {
-            distance -= diffLength * 0.7;
+            distance -= diffLength * Constants.DIFF_LEN_ADJUST_RATE_1;
         }
-        else if (rate < 0.4)
+        else if (rate < Constants.DIFF_LEN_RATE_LEVEL_2)
         {
-            distance -= diffLength * 0.5;
+            distance -= diffLength * Constants.DIFF_LEN_ADJUST_RATE_2;
         }
-        else if (rate < 0.6)
+        else if (rate < Constants.DIFF_LEN_RATE_LEVEL_3)
         {
-            distance -= diffLength * 0.3;
+            distance -= diffLength * Constants.DIFF_LEN_ADJUST_RATE_3;
         }
-        else if (rate < 0.8)
+        else if (rate < Constants.DIFF_LEN_RATE_LEVEL_4)
         {
-            distance -= diffLength * 0.1;
+            distance -= diffLength * Constants.DIFF_LEN_ADJUST_RATE_4;
         }
         else
         {
@@ -100,9 +101,9 @@ public class CorrectionTask extends AbstractTask
 //            distance += rate;
 //        }
         //TODO 根据整体长度调整distance
-        if (candidateElement.getSentence().length() > 2)
+        if (candidateElement.getSentence().length() > Constants.DIFF_LEN_THRESHOLD)
         {
-            distance -= (0.2 * (candidateElement.getSentence().length() - 2));
+            distance -= (candidateElement.getSentence().length() - Constants.DIFF_LEN_THRESHOLD) * Constants.DIFF_LEN_THRESHOLD_RATE;
         }
         return distance;
     }
