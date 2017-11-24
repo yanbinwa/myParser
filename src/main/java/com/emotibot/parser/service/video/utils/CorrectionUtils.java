@@ -3,11 +3,11 @@ package com.emotibot.parser.service.video.utils;
 import java.util.List;
 
 import com.emotibot.correction.service.CorrectionService;
-import com.emotibot.correction.service.CorrectionServiceImpl;
+import com.emotibot.correction.service.CorrectionService2Impl;
 
 public class CorrectionUtils
 {
-    private static CorrectionService correctionService = new CorrectionServiceImpl();
+    private static CorrectionService correctionService = new CorrectionService2Impl();
     
     public static List<String> correction(String nameEntity)
     {

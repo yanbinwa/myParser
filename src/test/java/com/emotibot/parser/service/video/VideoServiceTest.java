@@ -21,7 +21,7 @@ public class VideoServiceTest
 
     public static final String correctionFile = "/Users/emotibot/Documents/workspace/other/myParser/file/correctionTest.csv";
     
-    public static final String service_url = "http://localhost:9090/video/getVideo2Name";
+    public static final String service_url = "http://localhost:9090/video/getVideoName";
     
     //没有第几集这边的表达
     //public static final String correctionFile2 = "/Users/emotibot/Documents/workspace/other/myParser/file/correctionTest.csv";
@@ -37,7 +37,7 @@ public class VideoServiceTest
     public void test() throws Exception
     {
         long startTime = System.currentTimeMillis();
-        test3();
+        test2();
         long endTime = System.currentTimeMillis();
         System.out.println("用时：[" + (endTime - startTime) + "ms]");
         System.out.println("totalCount: " + totalCount + "; errorCount: " + errorTotalCount + "; errorRate: " + (errorTotalCount / (double)totalCount));
@@ -68,7 +68,7 @@ public class VideoServiceTest
         }
         csvReader.close();
         fReader.close();
-        System.out.println("total count: " + count + "; error count: " + errorCount);
+        System.out.println("total count: " + count + "; error count: " + errorCount + "; errorRate: " + (errorTotalCount / (double)totalCount));
     }
     
     @SuppressWarnings("unused")

@@ -151,10 +151,10 @@ public class ParseVideoNameStep extends AbstractStep
 //        {
 //            context.setValue(Constants.VIDEO_NAME_KEY, response.getTeleplay());
 //        }
-        if (!StringUtils.isEmpty(response.getStar()))
-        {
-            context.setValue(Constants.START_NAME_KEY, response.getStar());
-        }
+//        if (!StringUtils.isEmpty(response.getStar()))
+//        {
+//            context.setValue(Constants.START_NAME_KEY, response.getStar());
+//        }
     }
     
     @SuppressWarnings("unused")

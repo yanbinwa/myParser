@@ -29,6 +29,7 @@ public class VideoServiceImpl implements VideoService
     private static final Logger logger = Logger.getLogger(VideoServiceImpl.class);
     private ExecutorService executorService = Executors.newFixedThreadPool(100);
     
+    @SuppressWarnings("unused")
     @Override
     public String getVideoName(String sentence)
     {
@@ -40,13 +41,14 @@ public class VideoServiceImpl implements VideoService
         }
         Context context = new Context();
         context.setValue(Constants.SENTENCE_KEY, sentence);
+        String retStr = null;
 //        boolean ret = isNegetiveSentence(context);
 //        if(ret)
 //        {
 //            return "那您想看什么呀~";
 //        }
         
-        String retStr = parseVideoName(context);
+        retStr = parseVideoName(context);
         if (retStr != null)
         {
             return output(context);
@@ -56,7 +58,7 @@ public class VideoServiceImpl implements VideoService
         {
             return output(context);
         }
-        retStr = correctVideoName(context);
+        correctVideoName(context);
         logger.info("-------------- end -------------");
         logger.info("");
         return output(context);
@@ -79,6 +81,7 @@ public class VideoServiceImpl implements VideoService
         return type == SentenceType.NEGETIVE;
     }
     
+    @SuppressWarnings("unused")
     private String parseVideoName(Context context)
     {
         ParseVideoNameStep step = new ParseVideoNameStep(executorService);
@@ -101,7 +104,7 @@ public class VideoServiceImpl implements VideoService
         long startTime = System.currentTimeMillis();
         step.execute(context);
         long endTime = System.currentTimeMillis();
-        logger.info("CorrectionVideoNameStep: [" + (endTime - startTime) + "]ms");
+        logger.info("parserNameEntities: [" + (endTime - startTime) + "]ms");
         List<String> pareserNameEntities = (List<String>) context.getValue(Constants.NAME_ENTITY_LIST_KEY);
         logger.info(pareserNameEntities);
         return pareserNameEntities;

@@ -240,6 +240,7 @@ public class CorrectNameEntitiesStep extends AbstractStep
                 choseElement = element1;
             }
         }
+        distance += diffLen * Constants.CALCULATE_DIFF_RATE;
         return distance;
     }
     
@@ -272,7 +273,7 @@ public class CorrectNameEntitiesStep extends AbstractStep
                 choseElement = element1;
             }
         }
-        distance += diffLen * Constants.CALCULATE_DIFF_RATE;
+        distance += diffLen * Constants.CALCULATE_DIFF_WITHOUT_ORDER_RATE;
         return distance;
     }
     

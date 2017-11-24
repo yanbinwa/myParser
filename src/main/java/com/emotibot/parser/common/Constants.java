@@ -43,10 +43,13 @@ public class Constants
     /* 训练参数 */
     //Param CorrectNameEntities
     public static final double EDIT_DISTANCE_1_RATE = 0.5;
-    public static final double EDIT_DISTANCE_2_RATE = 5;
+    public static final double EDIT_DISTANCE_2_RATE = 3;
     public static final double EDIT_DISTANCE_3_RATE = 0.5;
     
-    public static final double CALCULATE_DIFF_RATE = 0.05;
+    //返回越长约有利
+    public static final double CALCULATE_DIFF_RATE = 0.4;
+    //返回越长约有利
+    public static final double CALCULATE_DIFF_WITHOUT_ORDER_RATE = 0.10;
     public static final int CORRECT_SELECT_NUM = 10;
     public static final double CORRECT_CHOOSE_RATE = 0.4;
     
@@ -62,7 +65,8 @@ public class Constants
     public static final double DIFF_LEN_ADJUST_RATE_4 = 0.1;
     
     public static final double DIFF_LEN_THRESHOLD = 2;
-    public static final double DIFF_LEN_THRESHOLD_RATE = 0.2;
+    //返回越长约有利
+    public static final double DIFF_LEN_THRESHOLD_RATE = 0.5;
     
     //final select
     public static final double MAX_DIFF_LEN = 2;
