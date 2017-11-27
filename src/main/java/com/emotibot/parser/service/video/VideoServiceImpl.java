@@ -1,5 +1,6 @@
 package com.emotibot.parser.service.video;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,17 +52,17 @@ public class VideoServiceImpl implements VideoService
         retStr = parseVideoName(context);
         if (retStr != null)
         {
-            return output(context);
+            return output1(context);
         }
         List<String> correctedNameEntities = parserNameEntities(context);
         if (correctedNameEntities == null || correctedNameEntities.isEmpty())
         {
-            return output(context);
+            return output1(context);
         }
         correctVideoName(context);
         logger.info("-------------- end -------------");
         logger.info("");
-        return output(context);
+        return output1(context);
     }
     
     @SuppressWarnings("unused")
@@ -134,7 +135,7 @@ public class VideoServiceImpl implements VideoService
         }
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "unused" })
     private String output(Context context)
     {
         String videoName = (String) context.getValue(Constants.VIDEO_NAME_KEY);
@@ -182,6 +183,49 @@ public class VideoServiceImpl implements VideoService
         {
             output.add(starName);
         }
+        if (obj1 != null)
+        {
+            output.addAll((List<String>)obj1);
+        }
+        if (obj2 != null)
+        {
+            output.addAll((List<String>)obj2);
+        }
+        return output.toString();
+    }
+    
+    @SuppressWarnings({ "unchecked", "unused" })
+    private String output1(Context context)
+    {
+        List<String> chooseVideo = new ArrayList<String>();
+        String videoName = (String) context.getValue(Constants.VIDEO_NAME_KEY);
+        if (videoName == null)
+        {
+            List<String> correctVideoNameList = (List<String>) context.getValue(Constants.CORRECTED_VIDEO_NAME_KEY);
+            if (correctVideoNameList != null && correctVideoNameList.size() > 0)
+            {
+                for (String name : correctVideoNameList)
+                {
+                    chooseVideo.add(name);
+                }
+            }
+        }
+        else
+        {
+            chooseVideo.add(videoName);
+        }
+        if (!chooseVideo.isEmpty())
+        {
+            return chooseVideo.toString();
+        }
+        
+        Object obj1 = context.getValue(Constants.VIDEO_KEYWORD_N_KEY);
+        Object obj2 = context.getValue(Constants.VIDEO_KEYWORD_A_KEY);
+        if (obj1 == null && obj2 == null)
+        {
+            return "找不到相应的电影";
+        }
+        Set<String> output = new HashSet<String>();
         if (obj1 != null)
         {
             output.addAll((List<String>)obj1);
