@@ -37,31 +37,31 @@ public class ParseVideoNameStep extends AbstractStep
     @Override
     public void beforeRun(Context context)
     {
-        String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
-        
-        //CommonParser Task
-        RestCallTask task = new CommonParserTask();
-        String text = "?tags=movie_name_module,teleplay_name_module,star_name_module&text=" + sentence;
-        String hostname = ConfigManager.INSTANCE.getPropertyString(Constants.TARGET_HOST);
-        String port = ConfigManager.INSTANCE.getPropertyString(Constants.COMMON_PARSER_PORT);
-        String endpoint = ConfigManager.INSTANCE.getPropertyString(Constants.COMMON_PARSER_ENDPOINT);
-        String url = UrlUtils.getUrl(hostname, port, endpoint, text);
-        HttpRequest request = new HttpRequest(url, null, HttpRequestType.GET);
-        task.setRequest(request);
-        task.setUniqId(context.getUniqId());
-        this.addTask(context, task);
-        
-        //NLU Task
-        task = new NLUTask();
-        text = "?f=namedEntities,namedEntitiesMT,keyword,srl&nerTypes=MOVIE&q=" + sentence;
-        hostname = ConfigManager.INSTANCE.getPropertyString(Constants.TARGET_HOST);
-        port = ConfigManager.INSTANCE.getPropertyString(Constants.NLU_PORT);
-        endpoint = ConfigManager.INSTANCE.getPropertyString(Constants.NLU_ENDPOINT);
-        url = UrlUtils.getUrl(hostname, port, endpoint, text);
-        request = new HttpRequest(url, null, HttpRequestType.GET);
-        task.setRequest(request);
-        task.setUniqId(context.getUniqId());
-        this.addTask(context, task);
+//        String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
+//        
+//        //CommonParser Task
+//        RestCallTask task = new CommonParserTask();
+//        String text = "?tags=movie_name_module,teleplay_name_module,star_name_module&text=" + sentence;
+//        String hostname = ConfigManager.INSTANCE.getPropertyString(Constants.TARGET_HOST);
+//        String port = ConfigManager.INSTANCE.getPropertyString(Constants.COMMON_PARSER_PORT);
+//        String endpoint = ConfigManager.INSTANCE.getPropertyString(Constants.COMMON_PARSER_ENDPOINT);
+//        String url = UrlUtils.getUrl(hostname, port, endpoint, text);
+//        HttpRequest request = new HttpRequest(url, null, HttpRequestType.GET);
+//        task.setRequest(request);
+//        task.setUniqId(context.getUniqId());
+//        this.addTask(context, task);
+//        
+//        //NLU Task
+//        task = new NLUTask();
+//        text = "?f=namedEntities,namedEntitiesMT,keyword,srl&nerTypes=MOVIE&q=" + sentence;
+//        hostname = ConfigManager.INSTANCE.getPropertyString(Constants.TARGET_HOST);
+//        port = ConfigManager.INSTANCE.getPropertyString(Constants.NLU_PORT);
+//        endpoint = ConfigManager.INSTANCE.getPropertyString(Constants.NLU_ENDPOINT);
+//        url = UrlUtils.getUrl(hostname, port, endpoint, text);
+//        request = new HttpRequest(url, null, HttpRequestType.GET);
+//        task.setRequest(request);
+//        task.setUniqId(context.getUniqId());
+//        this.addTask(context, task);
     }
 
     /**
@@ -77,7 +77,7 @@ public class ParseVideoNameStep extends AbstractStep
     public void afterRun(Context context)
     {
         parserVideoBaseInfo(context);
-        parserCommonParserResponse(context);
+//        parserCommonParserResponse(context);
 //        if (context.isContainsKey(Constants.VIDEO_NAME_KEY) || context.isContainsKey(Constants.START_NAME_KEY))
 //        {
 //            return;
@@ -87,22 +87,22 @@ public class ParseVideoNameStep extends AbstractStep
     
     private void parserVideoBaseInfo(Context context)
     {
-        List<Response> responseList = getOutputMap(context).get(CommonResponseType.NLU);
+//        List<Response> responseList = getOutputMap(context).get(CommonResponseType.NLU);
         String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
-        if (responseList == null || responseList.isEmpty())
-        {
-            return;
-        }
-        //第一步，读取出第几集，第几部的信息
-        NLUResponse response = (NLUResponse)responseList.get(0);
-        context.setValue(Constants.NLU_CACHE_KEY, response);
+//        if (responseList == null || responseList.isEmpty())
+//        {
+//            return;
+//        }
+//        //第一步，读取出第几集，第几部的信息
+//        NLUResponse response = (NLUResponse)responseList.get(0);
+//        context.setValue(Constants.NLU_CACHE_KEY, response);
         parserEpisodeOrSeason(context, sentence);
         
         //第二步，读取出keyword，包括名词和形容词，例如“播一部好看的电影”，将其在特定的目录中查找
-        List<String> keywordN = response.getValidSegmentForN();
-        List<String> keywordA = response.getValidSegmentForA();
-        context.setValue(Constants.VIDEO_KEYWORD_N_KEY, keywordN);
-        context.setValue(Constants.VIDEO_KEYWORD_A_KEY, keywordA);
+//        List<String> keywordN = response.getValidSegmentForN();
+//        List<String> keywordA = response.getValidSegmentForA();
+//        context.setValue(Constants.VIDEO_KEYWORD_N_KEY, keywordN);
+//        context.setValue(Constants.VIDEO_KEYWORD_A_KEY, keywordA);
     }
     
     private void parserEpisodeOrSeason(Context context, String nameEntity)

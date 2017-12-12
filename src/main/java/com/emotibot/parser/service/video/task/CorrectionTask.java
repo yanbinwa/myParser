@@ -3,6 +3,8 @@ package com.emotibot.parser.service.video.task;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.emotibot.correction.element.SentenceElement;
 import com.emotibot.correction.utils.EditDistanceUtils;
 import com.emotibot.middleware.response.Response;
@@ -14,7 +16,7 @@ import com.emotibot.parser.service.video.utils.CorrectionUtils;
 
 public class CorrectionTask extends AbstractTask
 {
-
+    private static Logger logger = Logger.getLogger(CorrectionTask.class); 
     private String nameEntity;
     private boolean isByPinyin = false;
     
@@ -41,6 +43,11 @@ public class CorrectionTask extends AbstractTask
         else
         {
             candidateList = CorrectionUtils.correctWithPinyin(nameEntity);
+        }
+        if (candidateList == null)
+        {
+            logger.error("can not get candidate from " + nameEntity);
+            return new CorrectionResponse(correctedNameEntityList);
         }
         SentenceElement element = new SentenceElement(nameEntity);
         for (String candidate : candidateList)

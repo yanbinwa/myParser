@@ -32,40 +32,44 @@ public class ParserNameEntitiesStep extends AbstractStep
     @Override
     public void beforeRun(Context context)
     {
-        String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
-        
-        Object obj = context.getValue(Constants.NLU_CACHE_KEY);
-        if (obj != null)
-        {
-            List<Response> nluReponseList = new ArrayList<Response>();
-            nluReponseList.add((Response)obj);
-            getOutputMap(context).put(CommonResponseType.NLU, nluReponseList);
-            return;
-        }
-        
-        NLUTask task = new NLUTask();
-        String text = "?f=srl&q=" + sentence;
-        String hostname = ConfigManager.INSTANCE.getPropertyString(Constants.TARGET_HOST);
-        String port = ConfigManager.INSTANCE.getPropertyString(Constants.NLU_PORT);
-        String endpoint = ConfigManager.INSTANCE.getPropertyString(Constants.NLU_ENDPOINT);
-        String url = UrlUtils.getUrl(hostname, port, endpoint, text);
-        HttpRequest request = new HttpRequest(url, null, HttpRequestType.GET);
-        task.setRequest(request);
-        task.setUniqId(context.getUniqId());
-        this.addTask(context, task);
+//        String sentence = (String) context.getValue(Constants.SENTENCE_KEY);
+//        
+//        Object obj = context.getValue(Constants.NLU_CACHE_KEY);
+//        if (obj != null)
+//        {
+//            List<Response> nluReponseList = new ArrayList<Response>();
+//            nluReponseList.add((Response)obj);
+//            getOutputMap(context).put(CommonResponseType.NLU, nluReponseList);
+//            return;
+//        }
+//        
+//        NLUTask task = new NLUTask();
+//        String text = "?f=srl&q=" + sentence;
+//        String hostname = ConfigManager.INSTANCE.getPropertyString(Constants.TARGET_HOST);
+//        String port = ConfigManager.INSTANCE.getPropertyString(Constants.NLU_PORT);
+//        String endpoint = ConfigManager.INSTANCE.getPropertyString(Constants.NLU_ENDPOINT);
+//        String url = UrlUtils.getUrl(hostname, port, endpoint, text);
+//        HttpRequest request = new HttpRequest(url, null, HttpRequestType.GET);
+//        task.setRequest(request);
+//        task.setUniqId(context.getUniqId());
+//        this.addTask(context, task);
     }
 
     @Override
     public void afterRun(Context context)
     {
-        List<Response> responseList = getOutputMap(context).get(CommonResponseType.NLU);
-        if (responseList == null || responseList.isEmpty())
-        {
-            return;
-        }
-        NLUResponse response = (NLUResponse)responseList.get(0);
-        //输入是2，取最后两个动词作用的对象
-        List<String> parserNameEntityList = response.getNameEntityBySRL(2);
+//        List<Response> responseList = getOutputMap(context).get(CommonResponseType.NLU);
+//        if (responseList == null || responseList.isEmpty())
+//        {
+//            return;
+//        }
+//        NLUResponse response = (NLUResponse)responseList.get(0);
+//        //输入是2，取最后两个动词作用的对象
+//        List<String> parserNameEntityList = response.getNameEntityBySRL(2);
+        /***/
+        List<String> parserNameEntityList = new ArrayList<String>();
+        parserNameEntityList.add((String)context.getValue(Constants.SENTENCE_KEY));
+        /***/
         parserNameEntityList = adjustNameEntities(context, parserNameEntityList);
         context.setValue(Constants.NAME_ENTITY_LIST_KEY, parserNameEntityList);
     }

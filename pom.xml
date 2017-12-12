@@ -57,7 +57,7 @@
     <dependency>
       <groupId>com.emotibot</groupId>
       <artifactId>middleware</artifactId>
-      <version>0.1.6-SNAPSHOT</version>
+      <version>0.1.8-SNAPSHOT</version>
 	</dependency>
 	<dependency>
       <groupId>com.emotibot</groupId>
@@ -71,11 +71,16 @@
     </dependency>
     <!-- https://mvnrepository.com/artifact/net.sf.opencsv/opencsv -->
 	<dependency>
-	    <groupId>net.sf.opencsv</groupId>
-	    <artifactId>opencsv</artifactId>
-	    <scope>test</scope>
-	    <version>2.3</version>
+	  <groupId>net.sf.opencsv</groupId>
+	  <artifactId>opencsv</artifactId>
+	  <scope>test</scope>
+	  <version>2.3</version>
 	</dependency>
+    <dependency>
+      <groupId>com.emotibot</groupId>
+      <artifactId>emotibot-module-core</artifactId>
+      <version>LATEST</version>
+    </dependency>
   </dependencies>
   <build>
     <defaultGoal>compile</defaultGoal>

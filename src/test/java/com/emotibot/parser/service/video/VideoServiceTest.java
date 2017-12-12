@@ -13,6 +13,7 @@ import com.emotibot.middleware.request.HttpRequest;
 import com.emotibot.middleware.request.HttpRequestType;
 import com.emotibot.middleware.response.HttpResponse;
 import com.emotibot.middleware.utils.HttpUtils;
+import com.emotibot.parser.service.video.utils.CorrectionUtils;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -37,7 +38,7 @@ public class VideoServiceTest
     public void test() throws Exception
     {
         long startTime = System.currentTimeMillis();
-        test2();
+        test3();
         long endTime = System.currentTimeMillis();
         System.out.println("用时：[" + (endTime - startTime) + "ms]");
         System.out.println("totalCount: " + totalCount + "; errorCount: " + errorTotalCount + "; errorRate: " + (errorTotalCount / (double)totalCount));
@@ -50,25 +51,24 @@ public class VideoServiceTest
         FileReader fReader = new FileReader(file);  
         CSVReader csvReader = new CSVReader(fReader); 
         List<String[]> list = csvReader.readAll();
-        int count = 0;
-        int errorCount = 0;
         for (String[] ss : list)
         {
-            count ++;
+            totalCount ++;
             String correctSentence = ss[0];
             String errorSentence = ss[1];
             HttpRequest request = new HttpRequest(service_url, errorSentence, HttpRequestType.POST);
+            //HttpRequest request = new HttpRequest(service_url, correctSentence, HttpRequestType.POST);
             HttpResponse response = HttpUtils.post(request, 10000);
             String result = response.getResponse();
             if (!result.trim().equals(correctSentence))
             {
                 System.out.println("correct: " + correctSentence + "; error: " + errorSentence + "; result: " + result);
-                errorCount ++;
+                //System.out.println(correctSentence);
+                errorTotalCount ++;
             }
         }
         csvReader.close();
         fReader.close();
-        System.out.println("total count: " + count + "; error count: " + errorCount + "; errorRate: " + (errorTotalCount / (double)totalCount));
     }
     
     @SuppressWarnings("unused")
@@ -100,7 +100,8 @@ public class VideoServiceTest
             HttpRequest request = new HttpRequest(service_url, sentence, HttpRequestType.POST);
             HttpResponse response = HttpUtils.post(request, 10000);
             String result = response.getResponse();
-            if (!result.trim().equals(correctSentence))
+            //if (!result.trim().equals(correctSentence))
+            if (!correctSentence.trim().contains(result))
             {
                 System.out.println("correct: " + correctSentence + "; error: " + errorSentence + "; sentence: " + sentence + "; result: " + result);
                 errorCount ++;
@@ -140,6 +141,36 @@ public class VideoServiceTest
         }
     }
     
+    @SuppressWarnings("unused")
+    private void test4() throws IOException, InterruptedException
+    {
+        File file = new File(correctionFile);  
+        FileReader fReader = new FileReader(file);  
+        CSVReader csvReader = new CSVReader(fReader); 
+        List<String[]> correctList = csvReader.readAll();
+        fReader.close();
+        csvReader.close();
+        
+        file = new File(sentenceTemplate);  
+        fReader = new FileReader(file); 
+        csvReader = new CSVReader(fReader); 
+        List<String[]> sentenceTemplateList = csvReader.readAll();
+        fReader.close();
+        csvReader.close();
+        
+        int count = 0;
+        int errorCount = 0;
+        for (String[] ss : correctList)
+        {
+            String correctSentence = ss[0];
+            String errorSentence = ss[1];
+            String sentenceTemplate = sentenceTemplateList.get(new Random().nextInt(sentenceTemplateList.size()))[0];
+            String sentence = sentenceTemplate.replaceAll("XXX", errorSentence);
+            String result = CorrectionUtils.getLikelyNameEntity(sentence);
+            System.out.println("correct: " + correctSentence + "; error: " + errorSentence + "; sentence: " + sentence + "; result: " + result);
+        }
+    }
+    
     class TestTask implements Runnable
     {
 
@@ -167,7 +198,8 @@ public class VideoServiceTest
                 HttpRequest request = new HttpRequest(service_url, sentence, HttpRequestType.POST);
                 HttpResponse response = HttpUtils.post(request, 10000);
                 String result = response.getResponse();
-                if (!result.trim().equals(correctSentence))
+                //if (!result.trim().equals(correctSentence))
+                if (!correctSentence.trim().contains(result))
                 {
                     System.out.println("correct: " + correctSentence + "; error: " + errorSentence + "; sentence: " + sentence + "; result: " + result);
                     errorCount ++;

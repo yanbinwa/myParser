@@ -50,19 +50,19 @@ public class VideoServiceImpl implements VideoService
 //        }
         
         retStr = parseVideoName(context);
-        if (retStr != null)
-        {
-            return output1(context);
-        }
+//        if (retStr != null)
+//        {
+//            return output1(context);
+//        }
         List<String> correctedNameEntities = parserNameEntities(context);
-        if (correctedNameEntities == null || correctedNameEntities.isEmpty())
-        {
-            return output1(context);
-        }
+//        if (correctedNameEntities == null || correctedNameEntities.isEmpty())
+//        {
+//            return output1(context);
+//        }
         correctVideoName(context);
         logger.info("-------------- end -------------");
         logger.info("");
-        return output1(context);
+        return output(context);
     }
     
     @SuppressWarnings("unused")
@@ -98,7 +98,7 @@ public class VideoServiceImpl implements VideoService
         return null;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "unused" })
     private List<String> parserNameEntities(Context context)
     {
         ParserNameEntitiesStep step = new ParserNameEntitiesStep(executorService);
@@ -118,7 +118,7 @@ public class VideoServiceImpl implements VideoService
         long startTime = System.currentTimeMillis();
         step.execute(context);
         long endTime = System.currentTimeMillis();
-        logger.info("CorrectNameEntitiesStep: [" + (endTime - startTime) + "]ms");
+        logger.info("Context: " + context.getValue(Constants.SENTENCE_KEY) + "; CorrectNameEntitiesStep: [" + (endTime - startTime) + "]ms");
         List<String> correctVideoNameList = (List<String>) context.getValue(Constants.CORRECTED_VIDEO_NAME_KEY);
         if (correctVideoNameList == null)
         {

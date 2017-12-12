@@ -71,4 +71,20 @@ public class Constants
     //final select
     public static final double MAX_DIFF_LEN = 2;
     public static final double MAX_DIFF_RATE = 2;
+    
+    //同义词
+    public static final String CONSUL_SERVICE_URL_KEY = "CONSUL_SERVICE_URL_KEY";
+    public static final String CONSUL_KEY_PREFIX_KEY = "CONSUL_KEY_PREFIX_KEY";
+    public static final String RUN_ON_LOCAL_KEY = "RUN_ON_LOCAL_KEY";
+    public static final String APPID_KEY = "APPID_KEY";
+    
+    public static final int CONSUL_INTERVAL_TIME = 2;
+    public static final int CONSUL_WAIT_TIME = 2;
+    
+    public static final String CONSUL_VALUE_JSON_KEY_URL = "url";
+    public static final String CONSUL_VALUE_JSON_KEY_MD5 = "md5";
+    public static final String CONSUL_VALUE_JSON_KEY_SYNONYM_URL = "synonym-url";
+    public static final String CONSUL_VALUE_JSON_KEY_SYNONYM_MD5 = "synonym-md5";
+    public static final String LINE_SPLIT_REGEX = "\\r\\n|\\n|\\r";
+    public static final int CONSUL_JOIN_TIME = 20;
 }

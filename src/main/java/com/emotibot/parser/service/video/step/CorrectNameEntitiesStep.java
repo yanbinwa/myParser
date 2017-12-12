@@ -22,6 +22,7 @@ import com.emotibot.parser.service.video.response.MyResponseType;
 import com.emotibot.parser.service.video.response.correction.CorrectedNameEntity;
 import com.emotibot.parser.service.video.response.correction.CorrectionResponse;
 import com.emotibot.parser.service.video.task.CorrectionTask;
+import com.emotibot.parser.service.video.utils.CorrectionUtils;
 
 
 /**
@@ -53,13 +54,17 @@ public class CorrectNameEntitiesStep extends AbstractStep
         Object obj = context.getValue(Constants.NAME_ENTITY_LIST_KEY);
         if (obj == null || !(obj instanceof List))
         {
-            return;
+            List<String> objTmp = new ArrayList<String>();
+            objTmp.add((String) context.getValue(Constants.SENTENCE_KEY));
+            obj = objTmp;
         }
         List<String> nameEntityList = (List<String>) obj;
+        System.out.println(nameEntityList);
         for (String nameEntity : nameEntityList)
         {
-            Task task = new CorrectionTask(nameEntity);
-            Task task2 = new CorrectionTask(nameEntity, true);
+            String likelyNameEntity = CorrectionUtils.getLikelyNameEntity(nameEntity);
+            Task task = new CorrectionTask(likelyNameEntity);
+            Task task2 = new CorrectionTask(likelyNameEntity, true);
             this.addTask(context, task);
             this.addTask(context, task2);
         }
@@ -68,6 +73,7 @@ public class CorrectNameEntitiesStep extends AbstractStep
     @Override
     public void afterRun(Context context)
     {
+        long start = System.currentTimeMillis();
         List<Response> responseList = this.getOutputMap(context).get(MyResponseType.CORRECTION);
         if (responseList == null)
         {
@@ -89,6 +95,8 @@ public class CorrectNameEntitiesStep extends AbstractStep
             result.add(correctedNameEntityList.get(0).getNameEntity());
         }
         context.setValue(Constants.CORRECTED_VIDEO_NAME_KEY, result);
+        long end = System.currentTimeMillis();
+        System.out.println("cost: [" + (end - start) + "]ms");
     }
     
     
