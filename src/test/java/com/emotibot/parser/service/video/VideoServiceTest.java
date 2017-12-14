@@ -20,7 +20,7 @@ import au.com.bytecode.opencsv.CSVReader;
 public class VideoServiceTest
 {
 
-    public static final String correctionFile = "/Users/emotibot/Documents/workspace/other/myParser/file/correctionTest.csv";
+    public static final String correctionFile = "/Users/emotibot/Documents/workspace/other/myParser/file/自动测试2.csv";
     
     public static final String service_url = "http://localhost:9090/video/getVideoName";
     
@@ -38,7 +38,7 @@ public class VideoServiceTest
     public void test() throws Exception
     {
         long startTime = System.currentTimeMillis();
-        test3();
+        test1();
         long endTime = System.currentTimeMillis();
         System.out.println("用时：[" + (endTime - startTime) + "ms]");
         System.out.println("totalCount: " + totalCount + "; errorCount: " + errorTotalCount + "; errorRate: " + (errorTotalCount / (double)totalCount));

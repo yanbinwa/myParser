@@ -9,7 +9,7 @@ import com.emotibot.configclient.ConsulConfigClient;
 
 public class ConsoleUtils
 {
-private static ConsulConfigClient configClient = null;
+    private static ConsulConfigClient configClient = null;
     
     public static boolean registerConsul(String consulServiceURL, String consulKeyPrefix, ConfigResponseCallback callback)
     {

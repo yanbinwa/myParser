@@ -63,6 +63,7 @@ public class CorrectNameEntitiesStep extends AbstractStep
         for (String nameEntity : nameEntityList)
         {
             String likelyNameEntity = CorrectionUtils.getLikelyNameEntity(nameEntity);
+            System.out.println("likelyNameEntity:" + likelyNameEntity);
             Task task = new CorrectionTask(likelyNameEntity);
             Task task2 = new CorrectionTask(likelyNameEntity, true);
             this.addTask(context, task);
